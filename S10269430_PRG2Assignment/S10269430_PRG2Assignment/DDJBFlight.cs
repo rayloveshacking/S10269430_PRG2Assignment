@@ -4,6 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+/*
+//==========================================================
+// Student Number : S10269430K
+// Student Name : Thar Htet Shein
+// Partner Name : Bhaveesh
+//==========================================================
+*/
+
 namespace S10269430_PRG2Assignment
 {
     public class DDJBFlight : Flight
