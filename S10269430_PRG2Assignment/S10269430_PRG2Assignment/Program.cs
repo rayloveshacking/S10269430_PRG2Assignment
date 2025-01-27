@@ -64,6 +64,11 @@ Dictionary<string, Flight> LoadFlights(string filePath)
 string filePath = "flights.csv";
 var flightsDictionary = LoadFlights(filePath);
 
+//// Example usage
+//string filePath = "flights.csv";
+//var flightsDictionary = LoadFlights(filePath);
+
+
 // Print the loaded flights
 foreach (var flight in flightsDictionary.Values)
 {
