@@ -9,7 +9,7 @@ using S10269430_PRG2Assignment;
 //==========================================================
 // Student Number : S10269430K
 // Student Name : Thar Htet Shein
-// Partner Name : Bhaveesh
+// Partner Name : Nadella Bhaveesh Sai
 //==========================================================
 */
 

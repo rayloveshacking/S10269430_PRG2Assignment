@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 //==========================================================
 // Student Number : S10269430K
 // Student Name : Thar Htet Shein
-// Partner Name : Bhaveesh
+// Partner Name : Nadella Bhaveesh Sai
 //==========================================================
 */
 
