@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\bhave\\Downloads\\PRG2-Assg\\PRG2Assignment\\S10269430_PRG2Assignment\\S10269430_PRG2Assignment\\S10269430_PRG2Assignment.csproj": {}
+    "C:\\Users\\USER\\Downloads\\PRG2Assignment\\S10269430_PRG2Assignment\\S10269430_PRG2Assignment\\S10269430_PRG2Assignment.csproj": {}
   },
   "projects": {
-    "C:\\Users\\bhave\\Downloads\\PRG2-Assg\\PRG2Assignment\\S10269430_PRG2Assignment\\S10269430_PRG2Assignment\\S10269430_PRG2Assignment.csproj": {
+    "C:\\Users\\USER\\Downloads\\PRG2Assignment\\S10269430_PRG2Assignment\\S10269430_PRG2Assignment\\S10269430_PRG2Assignment.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\bhave\\Downloads\\PRG2-Assg\\PRG2Assignment\\S10269430_PRG2Assignment\\S10269430_PRG2Assignment\\S10269430_PRG2Assignment.csproj",
+        "projectUniqueName": "C:\\Users\\USER\\Downloads\\PRG2Assignment\\S10269430_PRG2Assignment\\S10269430_PRG2Assignment\\S10269430_PRG2Assignment.csproj",
         "projectName": "S10269430_PRG2Assignment",
-        "projectPath": "C:\\Users\\bhave\\Downloads\\PRG2-Assg\\PRG2Assignment\\S10269430_PRG2Assignment\\S10269430_PRG2Assignment\\S10269430_PRG2Assignment.csproj",
-        "packagesPath": "C:\\Users\\bhave\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\bhave\\Downloads\\PRG2-Assg\\PRG2Assignment\\S10269430_PRG2Assignment\\S10269430_PRG2Assignment\\obj\\",
+        "projectPath": "C:\\Users\\USER\\Downloads\\PRG2Assignment\\S10269430_PRG2Assignment\\S10269430_PRG2Assignment\\S10269430_PRG2Assignment.csproj",
+        "packagesPath": "C:\\Users\\USER\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\USER\\Downloads\\PRG2Assignment\\S10269430_PRG2Assignment\\S10269430_PRG2Assignment\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\bhave\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\USER\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
