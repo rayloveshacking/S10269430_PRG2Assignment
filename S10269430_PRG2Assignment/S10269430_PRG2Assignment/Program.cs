@@ -43,6 +43,7 @@ while (true)
     Console.WriteLine("6. Modify Flight Details");
     Console.WriteLine("7. Display Flight Schedule");
     Console.WriteLine("8. Bulk Process Unassigned Flights"); //For new advanced feature
+    Console.WriteLine("9. Display Total Fee per Airline for the Day"); //New advanced feature
     Console.WriteLine("0. Exit");
     Console.WriteLine();
     Console.Write("Please select your option:\n");
@@ -75,6 +76,9 @@ while (true)
             break;
         case "8":
             BulkProcessUnassignedFlights(terminal);
+            break;
+        case "9":
+            DisplayTotalFeePerAirlineForTheDay(terminal);
             break;
         case "0":
             Console.WriteLine("Goodbye!");
@@ -1029,3 +1033,132 @@ static BoardingGate FindUnassignedGateForRequest(Terminal terminal, string reque
     }
     return null; // no match
 }
+
+// ------------------------------------------------------------------------
+// Bhaveesh's Advanced Feature B
+// ------------------------------------------------------------------------
+static void DisplayTotalFeePerAirlineForTheDay(Terminal terminal)
+{
+    Console.WriteLine("=============================================");
+    Console.WriteLine("Display the Total Fee per Airline for the Day");
+    Console.WriteLine("=============================================");
+
+    // 1) Check that ALL flights have been assigned a boarding gate
+    bool anyUnassigned = terminal.Flights.Values.Any(f =>
+        terminal.BoardingGates.Values.All(bg => bg.Flight != f));
+
+    if (anyUnassigned)
+    {
+        Console.WriteLine("ERROR: Not all flights have been assigned to boarding gates!");
+        Console.WriteLine("Please assign gates to ALL flights before running this feature.\n");
+        return;
+    }
+
+    // 2) Compute and display fees for each airline
+    double grandSubtotal = 0.0;
+    double grandDiscountTotal = 0.0;
+    double grandFinalTotal = 0.0;
+
+    // list airlines in alphabetical order of their Code, for clarity
+    var sortedAirlines = terminal.Airlines.Values.OrderBy(a => a.Code).ToList();
+
+    if (sortedAirlines.Count == 0)
+    {
+        Console.WriteLine("No airlines found!\n");
+        return;
+    }
+
+    foreach (var airline in sortedAirlines)
+    {
+        var flights = airline.Flights.Values.ToList();
+        int flightCount = flights.Count;
+
+        if (flightCount == 0)
+        {
+            // If an airline has no flights, skip or show $0
+            Console.WriteLine($"{airline.Name} ({airline.Code}) has no flights.\n");
+            continue;
+        }
+
+        // (a) Subtotal (before any discount) is simply the sum of each flight's .CalculateFees().
+        //     This includes: base fee ($300) + (destination-based 500/800) + any special request fees.
+        double subTotal = flights.Sum(f => f.CalculateFees());
+
+        // (b) Compute discounts just like the logic in Airline.CalculateFees():
+        //     discount1 = (Flights.Count / 3) * 350
+        //     discount2 = 110 for flights departing < 11:00 or >= 21:00
+        //     discount3 = 25 for flights from origin in {DXB, BKK, NRT}
+        //     discount4 = 50 for each NORMFlight
+        //     volume discount = 3% off subTotal if flightCount > 5
+
+        // First, gather the counts for discount2/3/4:
+        int discount2Count = 0; // flights < 11:00 or >= 21:00
+        int discount3Count = 0; // origin is DXB, BKK, or NRT
+        int discount4Count = 0; // flight is NORMFlight
+
+        foreach (var flight in flights)
+        {
+            DateTime t = flight.ExpectedTime;
+            if (t.Hour < 11 || t.Hour >= 21) discount2Count++;
+
+            if (new[] { "DXB", "BKK", "NRT" }.Contains(flight.Origin))
+                discount3Count++;
+
+            if (flight is NORMFlight) discount4Count++;
+        }
+
+        // discount #1
+        int discount1 = (flightCount / 3) * 350;
+        // discount #2
+        int discount2 = discount2Count * 110;
+        // discount #3
+        int discount3 = discount3Count * 25;
+        // discount #4
+        int discount4 = discount4Count * 50;
+
+        double volumeDiscount = 0.0;
+        if (flightCount > 5)
+        {
+            // 3% off the *subtotal*
+            volumeDiscount = subTotal * 0.03;
+        }
+
+        double discountPromotionsSum = discount1 + discount2 + discount3 + discount4;
+        double totalDiscounts = discountPromotionsSum + volumeDiscount;
+
+        // (c) Final total = subtotal - all discounts
+        double finalTotal = subTotal - totalDiscounts;
+
+        // 3) Display breakdown for this airline
+        Console.WriteLine($"Airline: {airline.Name} ({airline.Code})");
+        Console.WriteLine($"  Subtotal (No Discounts):            ${subTotal:0.00}");
+        Console.WriteLine($"  Volume Discount (if any):           ${volumeDiscount:0.00}");
+        Console.WriteLine($"  Promotional Discounts (1~4 total):  ${discountPromotionsSum:0.00}");
+        Console.WriteLine($"  TOTAL DISCOUNTS:                    ${totalDiscounts:0.00}");
+        Console.WriteLine($"  Final Fees to be Charged:           ${finalTotal:0.00}");
+        Console.WriteLine();
+
+        // Accumulate for the grand totals
+        grandSubtotal += subTotal;
+        grandDiscountTotal += totalDiscounts;
+        grandFinalTotal += finalTotal;
+    }
+
+    // 4) After listing each airline, display the overall summary
+    Console.WriteLine("===========================================================");
+    Console.WriteLine("Summary of All Airline Fees for the Day");
+    Console.WriteLine("===========================================================");
+    Console.WriteLine($"Grand Subtotal (before discounts):   ${grandSubtotal:0.00}");
+    Console.WriteLine($"Grand Total of Discounts:            ${grandDiscountTotal:0.00}");
+    Console.WriteLine($"Grand Final Total (fees collected):  ${grandFinalTotal:0.00}");
+
+    // Percentage of the subtotal discounts over the final total
+
+    double discountPercentage = 0.0;
+    if (grandFinalTotal != 0)
+    {
+        discountPercentage = (grandDiscountTotal / grandFinalTotal) * 100.0;
+    }
+    Console.WriteLine($"Percentage of discounts over final total: {discountPercentage:0.00}%\n");
+}
+
