@@ -4,7 +4,9 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using S10269430_PRG2Assignment;
-
+using System.Net.Http;
+using System.Text.Json;
+using System.Threading.Tasks;
 /*
 //==========================================================
 // Student Number : S10269430K
@@ -49,6 +51,7 @@ while (true)
     Console.WriteLine("8. Bulk Process Unassigned Flights"); //For new advanced feature
     Console.WriteLine("9. Display Total Fee per Airline for the Day"); //New advanced feature
     Console.WriteLine("10. Search and Filter Flights"); //Additional Feature A by Thar Htet Shein
+    Console.WriteLine("11. Display Weather at Changi"); //Additional Feature A by Nadella Bhaveesh Sai
     Console.WriteLine("0. Exit");
     Console.WriteLine();
     Console.Write("Please select your option:\n");
@@ -87,6 +90,9 @@ while (true)
             break;
         case "10":
             SearchAndFilterFlights(terminal);
+            break;
+        case "11":
+            await WeatherDisplay.DisplayWeather();
             break;
         case "0":
             Console.WriteLine("Goodbye!");
@@ -1241,6 +1247,7 @@ static void SearchAndFilterFlights(Terminal terminal)
     Console.WriteLine();
 }
 
+
 // =========================
 // FILTER HELPER METHODS
 // =========================
@@ -1330,4 +1337,44 @@ static IEnumerable<Flight> FilterByTimeRange(IEnumerable<Flight> flights)
 
     return result;
 }
+
+
+public class WeatherDisplay
+{
+    public static async Task DisplayWeather()
+    {
+        using HttpClient client = new();
+        string todayDate = DateTime.Now.ToString("yyyy-MM-dd");
+        string url = $"https://api.data.gov.sg/v1/environment/4-day-weather-forecast?date={todayDate}";
+
+        var obj = await FetchWeatherAsync(client, url);
+        if (obj?.items?.Length > 0 && obj.items[0].forecasts.Length > 0)
+        {
+            var todayForecast = obj.items[0].forecasts[0];
+
+            Console.WriteLine($"Weather Forecast for Today ({todayForecast.date}):");
+            Console.WriteLine($"- Forecast: {todayForecast.forecast}");
+            Console.WriteLine($"- Temperature: {todayForecast.temperature.low}°C - {todayForecast.temperature.high}°C");
+            Console.WriteLine($"- Humidity: {todayForecast.relative_humidity.low}% - {todayForecast.relative_humidity.high}%");
+            Console.WriteLine($"- Wind: {todayForecast.wind.speed.low} km/h - {todayForecast.wind.speed.high} km/h, Direction: {todayForecast.wind.direction}");
+        }
+        else
+        {
+            Console.WriteLine($"No weather data available for today ({todayDate}).");
+        }
+    }
+
+    // Async method to fetch the weather data from the API
+    private static async Task<Rootobject?> FetchWeatherAsync(HttpClient client, string url)
+    {
+        using Stream stream = await client.GetStreamAsync(url);
+        return await JsonSerializer.DeserializeAsync<Rootobject>(stream);
+    }
+}
+
+
+
+
+
+
 
