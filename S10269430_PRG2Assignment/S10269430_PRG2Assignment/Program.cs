@@ -48,6 +48,7 @@ while (true)
     Console.WriteLine("7. Display Flight Schedule");
     Console.WriteLine("8. Bulk Process Unassigned Flights"); //For new advanced feature
     Console.WriteLine("9. Display Total Fee per Airline for the Day"); //New advanced feature
+    Console.WriteLine("10. Search and Filter Flights"); //Additional Feature A by Thar Htet Shein
     Console.WriteLine("0. Exit");
     Console.WriteLine();
     Console.Write("Please select your option:\n");
@@ -83,6 +84,9 @@ while (true)
             break;
         case "9":
             DisplayTotalFeePerAirlineForTheDay(terminal);
+            break;
+        case "10":
+            SearchAndFilterFlights(terminal);
             break;
         case "0":
             Console.WriteLine("Goodbye!");
@@ -1166,3 +1170,164 @@ static void DisplayTotalFeePerAirlineForTheDay(Terminal terminal)
     }
     Console.WriteLine($"Percentage of discounts over final total: {discountPercentage:0.00}%\n");
 }
+
+static void SearchAndFilterFlights(Terminal terminal)
+{
+    Console.WriteLine("=============================================");
+    Console.WriteLine("Flight Search & Filter");
+    Console.WriteLine("=============================================");
+
+    Console.WriteLine("Choose a filter type:");
+    Console.WriteLine("1. By Flight Number");
+    Console.WriteLine("2. By Origin");
+    Console.WriteLine("3. By Destination");
+    Console.WriteLine("4. By Time Range");
+    Console.WriteLine("0. Cancel");
+    Console.Write("Enter your choice: ");
+    string choice = (Console.ReadLine() ?? "").Trim();
+    Console.WriteLine();
+
+    // If user wants to cancel
+    if (choice == "0")
+    {
+        Console.WriteLine("Returning to Main Menu...\n");
+        return;
+    }
+
+    IEnumerable<Flight> filteredFlights = terminal.Flights.Values; // Start with all flights
+
+    switch (choice)
+    {
+        case "1":
+            filteredFlights = FilterByFlightNumber(filteredFlights);
+            break;
+        case "2":
+            filteredFlights = FilterByOrigin(filteredFlights);
+            break;
+        case "3":
+            filteredFlights = FilterByDestination(filteredFlights);
+            break;
+        case "4":
+            filteredFlights = FilterByTimeRange(filteredFlights);
+            break;
+        default:
+            Console.WriteLine("Invalid choice. Returning to Main Menu...\n");
+            return;
+    }
+
+    // Convert to a list so we can reuse
+    var results = filteredFlights.ToList();
+    if (results.Count == 0)
+    {
+        Console.WriteLine("No flights found matching the criteria.\n");
+        return;
+    }
+
+    // Display the results
+    Console.WriteLine("Flights Matching Your Search:");
+    Console.WriteLine("Flight Number   Airline Name           Origin                 Destination              Expected Time           Status");
+    foreach (var flight in results)
+    {
+        Airline airline = terminal.GetAirlineFromFlight(flight);
+        string airlineName = airline != null ? airline.Name : "Unknown Airline";
+        Console.WriteLine("{0,-15} {1,-22} {2,-22} {3,-24} {4,-24} {5}",
+            flight.FlightNumber,
+            airlineName,
+            flight.Origin,
+            flight.Destination,
+            flight.ExpectedTime.ToString("d/M/yyyy h:mm:ss tt"),
+            flight.Status);
+    }
+    Console.WriteLine();
+}
+
+// =========================
+// FILTER HELPER METHODS
+// =========================
+
+static IEnumerable<Flight> FilterByFlightNumber(IEnumerable<Flight> flights)
+{
+    Console.Write("Enter Flight Number to search (partial or full): ");
+    string input = (Console.ReadLine() ?? "").Trim().ToUpper();
+    if (string.IsNullOrWhiteSpace(input))
+    {
+        // If user didn't enter anything, return the original list (no filter)
+        return flights;
+    }
+
+    return flights.Where(f => f.FlightNumber.ToUpper().Contains(input));
+}
+
+static IEnumerable<Flight> FilterByOrigin(IEnumerable<Flight> flights)
+{
+    Console.Write("Enter Origin to search (partial or full): ");
+    string input = (Console.ReadLine() ?? "").Trim().ToUpper();
+    if (string.IsNullOrWhiteSpace(input))
+    {
+        return flights; // no filter if blank
+    }
+
+    return flights.Where(f => f.Origin.ToUpper().Contains(input));
+}
+
+static IEnumerable<Flight> FilterByDestination(IEnumerable<Flight> flights)
+{
+    Console.Write("Enter Destination to search (partial or full): ");
+    string input = (Console.ReadLine() ?? "").Trim().ToUpper();
+    if (string.IsNullOrWhiteSpace(input))
+    {
+        return flights;
+    }
+
+    return flights.Where(f => f.Destination.ToUpper().Contains(input));
+}
+
+static IEnumerable<Flight> FilterByTimeRange(IEnumerable<Flight> flights)
+{
+    Console.Write("Enter Start Date/Time (dd/MM/yyyy HH:mm) or press Enter to skip: ");
+    string startInput = (Console.ReadLine() ?? "").Trim();
+    Console.Write("Enter End Date/Time (dd/MM/yyyy HH:mm) or press Enter to skip: ");
+    string endInput = (Console.ReadLine() ?? "").Trim();
+
+    DateTime? startTime = null;
+    DateTime? endTime = null;
+
+    // Try parse start time
+    if (!string.IsNullOrWhiteSpace(startInput))
+    {
+        if (DateTime.TryParseExact(startInput, "d/M/yyyy H:mm", null, System.Globalization.DateTimeStyles.None, out DateTime parsedStart))
+        {
+            startTime = parsedStart;
+        }
+        else
+        {
+            Console.WriteLine("Invalid start date/time format. Ignoring start time filter.\n");
+        }
+    }
+    // Try parse end time
+    if (!string.IsNullOrWhiteSpace(endInput))
+    {
+        if (DateTime.TryParseExact(endInput, "d/M/yyyy H:mm", null, System.Globalization.DateTimeStyles.None, out DateTime parsedEnd))
+        {
+            endTime = parsedEnd;
+        }
+        else
+        {
+            Console.WriteLine("Invalid end date/time format. Ignoring end time filter.\n");
+        }
+    }
+
+    // Filter
+    IEnumerable<Flight> result = flights;
+    if (startTime.HasValue)
+    {
+        result = result.Where(f => f.ExpectedTime >= startTime.Value);
+    }
+    if (endTime.HasValue)
+    {
+        result = result.Where(f => f.ExpectedTime <= endTime.Value);
+    }
+
+    return result;
+}
+
