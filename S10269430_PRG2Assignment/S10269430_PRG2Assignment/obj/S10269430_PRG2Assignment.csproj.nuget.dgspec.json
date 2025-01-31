@@ -1,24 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\micro\\Downloads\\S10269430_PRG2Assignment\\S10269430_PRG2Assignment\\S10269430_PRG2Assignment\\S10269430_PRG2Assignment.csproj": {}
+    "C:\\Users\\bhave\\Downloads\\S10269430_PRG2Assignment\\S10269430_PRG2Assignment\\S10269430_PRG2Assignment\\S10269430_PRG2Assignment.csproj": {}
   },
   "projects": {
-    "C:\\Users\\micro\\Downloads\\S10269430_PRG2Assignment\\S10269430_PRG2Assignment\\S10269430_PRG2Assignment\\S10269430_PRG2Assignment.csproj": {
+    "C:\\Users\\bhave\\Downloads\\S10269430_PRG2Assignment\\S10269430_PRG2Assignment\\S10269430_PRG2Assignment\\S10269430_PRG2Assignment.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\micro\\Downloads\\S10269430_PRG2Assignment\\S10269430_PRG2Assignment\\S10269430_PRG2Assignment\\S10269430_PRG2Assignment.csproj",
+        "projectUniqueName": "C:\\Users\\bhave\\Downloads\\S10269430_PRG2Assignment\\S10269430_PRG2Assignment\\S10269430_PRG2Assignment\\S10269430_PRG2Assignment.csproj",
         "projectName": "S10269430_PRG2Assignment",
-        "projectPath": "C:\\Users\\micro\\Downloads\\S10269430_PRG2Assignment\\S10269430_PRG2Assignment\\S10269430_PRG2Assignment\\S10269430_PRG2Assignment.csproj",
-        "packagesPath": "C:\\Users\\micro\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\micro\\Downloads\\S10269430_PRG2Assignment\\S10269430_PRG2Assignment\\S10269430_PRG2Assignment\\obj\\",
+        "projectPath": "C:\\Users\\bhave\\Downloads\\S10269430_PRG2Assignment\\S10269430_PRG2Assignment\\S10269430_PRG2Assignment\\S10269430_PRG2Assignment.csproj",
+        "packagesPath": "C:\\Users\\bhave\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\bhave\\Downloads\\S10269430_PRG2Assignment\\S10269430_PRG2Assignment\\S10269430_PRG2Assignment\\obj\\",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-        ],
         "configFilePaths": [
-          "C:\\Users\\micro\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Users\\bhave\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -43,8 +39,7 @@
           "enableAudit": "true",
           "auditLevel": "low",
           "auditMode": "direct"
-        },
-        "SdkAnalysisLevel": "9.0.100"
+        }
       },
       "frameworks": {
         "net8.0": {
@@ -65,7 +60,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.102/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.400/PortableRuntimeIdentifierGraph.json"
         }
       }
     }
