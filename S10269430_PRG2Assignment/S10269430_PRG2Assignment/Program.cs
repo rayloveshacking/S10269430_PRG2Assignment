@@ -3,10 +3,9 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using S10269430_PRG2Assignment;
-using System.Net.Http;
 using System.Text.Json;
-using System.Threading.Tasks;
+using S10269430_PRG2Assignment;
+
 /*
 //==========================================================
 // Student Number : S10269430K
@@ -57,7 +56,7 @@ while (true)
     Console.Write("Please select your option:\n");
 
     string choice = (Console.ReadLine() ?? "").Trim();
-    
+
 
     switch (choice)
     {
@@ -122,25 +121,25 @@ static void LoadAirlines(Terminal terminal, string filePath)
     {
         if (string.IsNullOrWhiteSpace(line)) continue;
         var columns = line.Split(',');
-        if (columns.Length < 2) continue;
+        if (columns.Length < 2) continue; //This will check if the line have two columns or not
 
         string airlineName = columns[0].Trim();
         string airlineCode = columns[1].Trim();
 
-        if (!terminal.Airlines.ContainsKey(airlineCode))
+        if (!terminal.Airlines.ContainsKey(airlineCode)) //We will check whether the AirLines dictionary from terminal class contains the code or not
         {
-            Airline airline = new Airline(airlineName, airlineCode);
-            terminal.Airlines.Add(airlineCode, airline);
-            count++;
+            Airline airline = new Airline(airlineName, airlineCode); //If not then we will create a new airline with the above information
+            terminal.Airlines.Add(airlineCode, airline); //And here we will add it to airlines dictionary in the terminal class
+            count++; //This will increase the count
         }
     }
 
     Console.WriteLine($"{count} Airlines Loaded!");
 }
 
-static void LoadBoardingGates(Terminal terminal, string filePath)
+static void LoadBoardingGates(Terminal terminal, string filePath) //Input the terminal and filepath as the params through this function
 {
-    if (!File.Exists(filePath))
+    if (!File.Exists(filePath)) //This will check whether the file exists or not first
     {
         Console.WriteLine($"File not found: {filePath}");
         return;
@@ -151,19 +150,19 @@ static void LoadBoardingGates(Terminal terminal, string filePath)
 
     foreach (var line in lines)
     {
-        if (string.IsNullOrWhiteSpace(line)) continue;
-        var columns = line.Split(',');
-        if (columns.Length < 4) continue;
+        if (string.IsNullOrWhiteSpace(line)) continue; //Check first if the string is null or whitespaces
+        var columns = line.Split(','); //Split the lines and assign in to columns variable
+        if (columns.Length < 4) continue; //Check if there are 4 columns or not
 
         string gateName = columns[0].Trim();
-        bool ddjb = bool.Parse(columns[1].Trim());
+        bool ddjb = bool.Parse(columns[1].Trim()); //Passes true or false
         bool cfft = bool.Parse(columns[2].Trim());
         bool lwtt = bool.Parse(columns[3].Trim());
 
-        if (!terminal.BoardingGates.ContainsKey(gateName))
+        if (!terminal.BoardingGates.ContainsKey(gateName)) //Check if the BoardingGates Dictionary from terminal contain the gatename or not
         {
-            BoardingGate gate = new BoardingGate(gateName, cfft, ddjb, lwtt);
-            terminal.BoardingGates.Add(gateName, gate);
+            BoardingGate gate = new BoardingGate(gateName, cfft, ddjb, lwtt); //If not then a new BoardingGate will be created
+            terminal.BoardingGates.Add(gateName, gate); //Added to the BoardingGates Dictionary
             count++;
         }
     }
@@ -171,7 +170,7 @@ static void LoadBoardingGates(Terminal terminal, string filePath)
     Console.WriteLine($"{count} Boarding Gates Loaded!");
 }
 
-static void LoadFlights(Terminal terminal, string filePath)
+static void LoadFlights(Terminal terminal, string filePath) //This method will take terminal and filepath as the parameters.
 {
     if (!File.Exists(filePath))
     {
@@ -182,16 +181,16 @@ static void LoadFlights(Terminal terminal, string filePath)
     var lines = File.ReadAllLines(filePath).Skip(1); // skip header
     int count = 0;
 
-    // By default, let's assume the CSV flights are all on 18/1/2025
-    DateTime defaultDate = new DateTime(2025, 1, 18);
+    // The date will be the current date 
+    DateTime defaultDate = DateTime.Today;
 
     foreach (var line in lines)
     {
-        if (string.IsNullOrWhiteSpace(line)) continue;
+        if (string.IsNullOrWhiteSpace(line)) continue; //As usual we will check if there are any null or less than the columns expected
         var columns = line.Split(',');
         if (columns.Length < 4) continue;
 
-        string flightNumber = columns[0].Trim();
+        string flightNumber = columns[0].Trim(); //take the specific parts from the variable accordingly.
         string origin = columns[1].Trim();
         string destination = columns[2].Trim();
         string timeString = columns[3].Trim();
@@ -214,7 +213,7 @@ static void LoadFlights(Terminal terminal, string filePath)
             0
         );
 
-        // Create flight object
+        // Create flight object depending on the special request code
         Flight flight;
         switch (specialRequestCode.ToUpper())
         {
@@ -260,20 +259,23 @@ static void ListAllFlights(Terminal terminal)
     Console.WriteLine("List of Flights for Changi Airport Terminal 5");
     Console.WriteLine("=============================================");
 
-    // Print headings
-    Console.WriteLine("Flight Number   Airline Name           Origin                 Destination              Expected Departure/Arrival Time");
+    // Print headings with appropriate spacing
+    Console.WriteLine("{0,-15} {1,-22} {2,-22} {3,-24} {4}",
+        "Flight Number", "Airline Name", "Origin", "Destination", "Expected Departure/Arrival Time");
+
 
     foreach (var flight in terminal.Flights.Values)
     {
-        Airline airline = terminal.GetAirlineFromFlight(flight);
-        string airlineName = (airline == null) ? "Unknown Airline" : airline.Name;
+        Airline airline = terminal.GetAirlineFromFlight(flight); //Get the airline from terminal 
+        string airlineName = (airline == null) ? "Unknown Airline" : airline.Name; //If airline is null, it's unknown airline, if not airline name
+        string formattedTime = flight.ExpectedTime.ToString("d/M/yyyy h:mm:ss tt").ToLower(); //Format the time to the desired time format.
 
-        Console.WriteLine("{0,-15} {1,-22} {2,-22} {3,-24} {4}",
+        Console.WriteLine("{0,-15} {1,-22} {2,-22} {3,-24} {4}", //Print all the information out.
             flight.FlightNumber,
             airlineName,
             flight.Origin,
             flight.Destination,
-            flight.ExpectedTime.ToString("d/M/yyyy h:mm:ss tt"));
+            formattedTime);
     }
     Console.WriteLine();
 }
@@ -322,19 +324,19 @@ static void AssignBoardingGate(Terminal terminal)
         Console.WriteLine($"Flight {flightNumber} not found!\n");
         return;
     }
-    Flight selectedFlight = terminal.Flights[flightNumber];
+    Flight selectedFlight = terminal.Flights[flightNumber]; //Select a flight with the flight number.
 
     while (true)
     {
         Console.Write("Enter Boarding Gate Name:\n");
-        string gateName = (Console.ReadLine() ?? "").Trim();
-        if (!terminal.BoardingGates.ContainsKey(gateName))
+        string gateName = (Console.ReadLine() ?? "").Trim(); //Take the gatename from the user
+        if (!terminal.BoardingGates.ContainsKey(gateName)) //Search if there is a boarding gate in the BoardingGates Dictionary.
         {
             Console.WriteLine($"Boarding Gate {gateName} does not exist. Please try again.\n");
             continue;
         }
 
-        BoardingGate gate = terminal.BoardingGates[gateName];
+        BoardingGate gate = terminal.BoardingGates[gateName]; //Assign to a boarding gate variable if there is a gate
 
         // Check if gate is already assigned
         if (gate.Flight != null)
@@ -372,7 +374,7 @@ static void AssignBoardingGate(Terminal terminal)
             switch (opt)
             {
                 case "1":
-                    selectedFlight.Status = "Delayed";
+                    selectedFlight.Status = "Delayed"; //Assign the status of the flight depending on the user option.
                     break;
                 case "2":
                     selectedFlight.Status = "Boarding";
@@ -399,12 +401,12 @@ static void AssignBoardingGate(Terminal terminal)
 // ------------------------------------------------------------------------
 // 4) CREATE A NEW FLIGHT
 // ------------------------------------------------------------------------
-static void CreateFlight(Terminal terminal, string flightsCsvPath)
+static void CreateFlight(Terminal terminal, string flightsCsvPath) //Give the method a terminal and the flights csv
 {
     while (true)
     {
         Console.Write("Enter Flight Number: ");
-        string flightNumber = (Console.ReadLine() ?? "").Trim();
+        string flightNumber = (Console.ReadLine() ?? "").Trim(); //Take the flight number from the user
         if (string.IsNullOrWhiteSpace(flightNumber))
         {
             Console.WriteLine("Invalid flight number. Try again.\n");
@@ -412,9 +414,9 @@ static void CreateFlight(Terminal terminal, string flightsCsvPath)
         }
 
         Console.Write("Enter Origin: ");
-        string origin = Console.ReadLine()?.Trim() ?? "";
+        string origin = Console.ReadLine()?.Trim() ?? ""; //Take the origin from the user
         Console.Write("Enter Destination: ");
-        string destination = Console.ReadLine()?.Trim() ?? "";
+        string destination = Console.ReadLine()?.Trim() ?? ""; //Take the destination from the user
 
         // parse date/time
         DateTime expectedDateTime;
@@ -423,7 +425,7 @@ static void CreateFlight(Terminal terminal, string flightsCsvPath)
             Console.Write("Enter Expected Departure/Arrival Time (dd/mm/yyyy hh:mm): ");
             string dateTimeInput = (Console.ReadLine() ?? "").Trim();
             if (DateTime.TryParseExact(dateTimeInput, "d/M/yyyy H:mm", CultureInfo.InvariantCulture,
-                DateTimeStyles.None, out expectedDateTime))
+                DateTimeStyles.None, out expectedDateTime)) //Take the expected date time from the user and parse it in the exact format.
             {
                 break;
             }
@@ -513,7 +515,7 @@ static void DisplayAirlineFlights(Terminal terminal)
 
     Console.Write("Enter Airline Code: ");
     string code = (Console.ReadLine() ?? "").Trim().ToUpper();
-    
+
 
     if (!terminal.Airlines.ContainsKey(code))
     {
@@ -560,11 +562,11 @@ static void ModifyFlightDetails(Terminal terminal)
             airline.Code,
             airline.Name);
     }
-    
+
 
     Console.Write("Enter Airline Code:\n");
     string airlineCode = (Console.ReadLine() ?? "").Trim().ToUpper();
-    
+
 
     if (!terminal.Airlines.ContainsKey(airlineCode))
     {
@@ -572,7 +574,7 @@ static void ModifyFlightDetails(Terminal terminal)
         return;
     }
 
-    Airline selectedAirline = terminal.Airlines[airlineCode];
+    Airline selectedAirline = terminal.Airlines[airlineCode]; //Select the airline from airlines dictionary using the airline code from the user
     Console.WriteLine($"List of Flights for {selectedAirline.Name}");
     // Print headings for the flights
     Console.WriteLine("Flight Number   Airline Name           Origin                 Destination              Expected Departure/Arrival Time");
@@ -585,29 +587,29 @@ static void ModifyFlightDetails(Terminal terminal)
             f.Destination,
             f.ExpectedTime.ToString("d/M/yyyy h:mm:ss tt"));
     }
-    
+
 
     Console.Write("Choose an existing Flight to modify or delete:\n");
     string chosenFlightNum = (Console.ReadLine() ?? "").Trim();
-    
 
-    if (string.IsNullOrWhiteSpace(chosenFlightNum) || !selectedAirline.Flights.ContainsKey(chosenFlightNum))
+
+    if (string.IsNullOrWhiteSpace(chosenFlightNum) || !selectedAirline.Flights.ContainsKey(chosenFlightNum)) //Check if user enter nothing or the flight dont exist
     {
         Console.WriteLine($"Flight '{chosenFlightNum}' not found under {selectedAirline.Name}.\n");
         return;
     }
 
-    Flight chosenFlight = selectedAirline.Flights[chosenFlightNum];
+    Flight chosenFlight = selectedAirline.Flights[chosenFlightNum]; //Select the flight from Flights based on user input
 
     Console.WriteLine("1. Modify Flight");
     Console.WriteLine("2. Delete Flight");
     Console.Write("Choose an option:\n");
     string modOrDelete = (Console.ReadLine() ?? "").Trim();
-    
+
 
     if (modOrDelete == "1")
     {
-        
+
         Console.WriteLine("1. Modify Basic Information");
         Console.WriteLine("2. Modify Status");
         Console.WriteLine("3. Modify Special Request Code");
@@ -649,10 +651,10 @@ static void ModifyFlightDetails(Terminal terminal)
         if (confirm == "Y")
         {
             BoardingGate gateAssigned = terminal.BoardingGates.Values
-                .FirstOrDefault(g => g.Flight == chosenFlight);
+                .FirstOrDefault(g => g.Flight == chosenFlight); //This is used to find the first boarding gate whose flight matches the properties of the chosen Flight.
             if (gateAssigned != null)
             {
-                gateAssigned.Flight = null;
+                gateAssigned.Flight = null; //If found it will become null
             }
             selectedAirline.Flights.Remove(chosenFlightNum);
             terminal.Flights.Remove(chosenFlightNum);
@@ -675,12 +677,12 @@ static void ModifyBasicInformation(Flight flight)
     Console.Write($"Enter new Origin: ");
     string newOrigin = Console.ReadLine()?.Trim();
     if (!string.IsNullOrWhiteSpace(newOrigin))
-        flight.Origin = newOrigin;
+        flight.Origin = newOrigin; //Change the origin of the flight to the new origin.
 
     Console.Write($"Enter new Destination: ");
     string newDestination = Console.ReadLine()?.Trim();
     if (!string.IsNullOrWhiteSpace(newDestination))
-        flight.Destination = newDestination;
+        flight.Destination = newDestination; //Change the destination of the flight to the new destination.
 
     while (true)
     {
@@ -689,9 +691,9 @@ static void ModifyBasicInformation(Flight flight)
         if (string.IsNullOrWhiteSpace(input)) break; // skip if user just presses Enter
 
         if (DateTime.TryParseExact(input, "d/M/yyyy H:mm", CultureInfo.InvariantCulture,
-            DateTimeStyles.None, out DateTime newDateTime))
+            DateTimeStyles.None, out DateTime newDateTime)) //Format the time 
         {
-            flight.ExpectedTime = newDateTime;
+            flight.ExpectedTime = newDateTime; //Change the expected time of the flight to the new date time.
             break;
         }
         else
@@ -783,7 +785,7 @@ static void ModifySpecialRequestCode(Terminal terminal, Flight oldFlight)
 static void ModifyBoardingGate(Terminal terminal, Flight flight)
 {
     // Unassign old gate
-    BoardingGate oldGate = terminal.BoardingGates.Values.FirstOrDefault(g => g.Flight == flight);
+    BoardingGate oldGate = terminal.BoardingGates.Values.FirstOrDefault(g => g.Flight == flight); //Find the first boarding gate that matches the flight property of the given flight.
     if (oldGate != null)
     {
         oldGate.Flight = null;
@@ -799,7 +801,7 @@ static void ModifyBoardingGate(Terminal terminal, Flight flight)
             continue;
         }
 
-        BoardingGate newGate = terminal.BoardingGates[newGateName];
+        BoardingGate newGate = terminal.BoardingGates[newGateName]; //Choose the newgate based on the user entered gatename.
         if (newGate.Flight != null)
         {
             Console.WriteLine($"Gate '{newGate.GateName}' is already assigned to flight '{newGate.Flight.FlightNumber}'.\n");
@@ -815,13 +817,13 @@ static void ModifyBoardingGate(Terminal terminal, Flight flight)
 // Display updated flight details
 static void DisplayFullFlightDetails(Terminal terminal, Flight flight)
 {
-    Airline parentAirline = terminal.GetAirlineFromFlight(flight);
-    string airlineName = parentAirline != null ? parentAirline.Name : "Unknown Airline";
+    Airline parentAirline = terminal.GetAirlineFromFlight(flight); //Choose the flight from the terminal
+    string airlineName = parentAirline != null ? parentAirline.Name : "Unknown Airline"; //If parent airline is not null, either parent air line name or unknown airline if dont exist.
 
-    BoardingGate gate = terminal.BoardingGates.Values.FirstOrDefault(g => g.Flight == flight);
+    BoardingGate gate = terminal.BoardingGates.Values.FirstOrDefault(g => g.Flight == flight); //Choose a gate from the boarding gates for the flight that matches the given flight
     string gateName = gate != null ? gate.GateName : "Unassigned";
 
-    string specialRequest = GetSpecialRequestCodeFromFlight(flight);
+    string specialRequest = GetSpecialRequestCodeFromFlight(flight); //Get the special request code from the flight.
     if (string.IsNullOrEmpty(specialRequest)) specialRequest = "None";
 
     Console.WriteLine("Flight Number: " + flight.FlightNumber);
@@ -1177,6 +1179,9 @@ static void DisplayTotalFeePerAirlineForTheDay(Terminal terminal)
     Console.WriteLine($"Percentage of discounts over final total: {discountPercentage:0.00}%\n");
 }
 
+// ------------------------------------------------------------------------
+// Thar Htet Shein's Additional Feature
+// ------------------------------------------------------------------------
 static void SearchAndFilterFlights(Terminal terminal)
 {
     Console.WriteLine("=============================================");
@@ -1246,7 +1251,6 @@ static void SearchAndFilterFlights(Terminal terminal)
     }
     Console.WriteLine();
 }
-
 
 // =========================
 // FILTER HELPER METHODS
@@ -1338,7 +1342,9 @@ static IEnumerable<Flight> FilterByTimeRange(IEnumerable<Flight> flights)
     return result;
 }
 
-
+// ------------------------------------------------------------------------
+// Bhaveesh's Additional Feature
+// ------------------------------------------------------------------------
 public class WeatherDisplay
 {
     public static async Task DisplayWeather()
@@ -1371,10 +1377,3 @@ public class WeatherDisplay
         return await JsonSerializer.DeserializeAsync<Rootobject>(stream);
     }
 }
-
-
-
-
-
-
-
