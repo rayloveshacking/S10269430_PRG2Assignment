@@ -19,19 +19,23 @@ Terminal terminal = new Terminal("Changi Airport Terminal 5");
 // 2) Load files (airlines + boarding gates + flights)
 Console.WriteLine("Loading Airlines...");
 LoadAirlines(terminal, "airlines.csv");
-Console.WriteLine();
+
 
 Console.WriteLine("Loading Boarding Gates...");
 LoadBoardingGates(terminal, "boardinggates.csv");
-Console.WriteLine();
+
 
 Console.WriteLine("Loading Flights...");
 LoadFlights(terminal, "flights.csv");
-Console.WriteLine();
+
+
 
 // Repeatedly show the main menu until the user chooses to exit
 while (true)
 {
+    Console.WriteLine();
+    Console.WriteLine();
+    Console.WriteLine();
     Console.WriteLine("=============================================");
     Console.WriteLine("Welcome to Changi Airport Terminal 5");
     Console.WriteLine("=============================================");
@@ -44,12 +48,13 @@ while (true)
     Console.WriteLine("7. Display Flight Schedule");
     Console.WriteLine("8. Bulk Process Unassigned Flights"); //For new advanced feature
     Console.WriteLine("9. Display Total Fee per Airline for the Day"); //New advanced feature
+    Console.WriteLine("10. Search and Filter Flights"); //Additional Feature A by Thar Htet Shein
     Console.WriteLine("0. Exit");
     Console.WriteLine();
     Console.Write("Please select your option:\n");
 
     string choice = (Console.ReadLine() ?? "").Trim();
-    Console.WriteLine(); // extra spacing after user input
+    
 
     switch (choice)
     {
@@ -79,6 +84,9 @@ while (true)
             break;
         case "9":
             DisplayTotalFeePerAirlineForTheDay(terminal);
+            break;
+        case "10":
+            SearchAndFilterFlights(terminal);
             break;
         case "0":
             Console.WriteLine("Goodbye!");
@@ -273,13 +281,15 @@ static void ListAllBoardingGates(Terminal terminal)
     Console.WriteLine("List of Boarding Gates for Changi Airport Terminal 5");
     Console.WriteLine("=============================================");
 
-    // Print headings
-    Console.WriteLine("Gate Name  DDJB   CFFT   LWTT");
+    // For headings, each column is 25 characters wide (-25 => left aligned)
+    Console.WriteLine("{0,-25}{1,-25}{2,-25}{3,-25}",
+        "Gate Name", "DDJB", "CFFT", "LWTT");
 
     // Sort by gate name
     foreach (var gate in terminal.BoardingGates.Values.OrderBy(g => g.GateName))
     {
-        Console.WriteLine("{0,-10} {1,-6} {2,-6} {3,-6}",
+        // Match the same widths for the data
+        Console.WriteLine("{0,-25}{1,-25}{2,-25}{3,-25}",
             gate.GateName,
             gate.SupportsDDJB,
             gate.SupportsCFFT,
@@ -288,6 +298,7 @@ static void ListAllBoardingGates(Terminal terminal)
     }
     Console.WriteLine();
 }
+
 
 // ------------------------------------------------------------------------
 // 3) ASSIGN A BOARDING GATE TO A FLIGHT
@@ -298,7 +309,7 @@ static void AssignBoardingGate(Terminal terminal)
     Console.WriteLine("Assign a Boarding Gate to a Flight");
     Console.WriteLine("=============================================");
 
-    Console.Write("Enter Flight Number: ");
+    Console.Write("Enter Flight Number:\n");
     string flightNumber = (Console.ReadLine() ?? "").Trim();
     if (!terminal.Flights.ContainsKey(flightNumber))
     {
@@ -309,7 +320,7 @@ static void AssignBoardingGate(Terminal terminal)
 
     while (true)
     {
-        Console.Write("Enter Boarding Gate Name: ");
+        Console.Write("Enter Boarding Gate Name:\n");
         string gateName = (Console.ReadLine() ?? "").Trim();
         if (!terminal.BoardingGates.ContainsKey(gateName))
         {
@@ -343,14 +354,14 @@ static void AssignBoardingGate(Terminal terminal)
         Console.WriteLine($"Supports LWTT: {gate.SupportsLWTT}");
 
         // Prompt to update status
-        Console.Write("Would you like to update the status of the flight? (Y/N): ");
+        Console.Write("Would you like to update the status of the flight? (Y/N):\n");
         string updateStatus = (Console.ReadLine() ?? "").Trim().ToUpper();
         if (updateStatus == "Y")
         {
             Console.WriteLine("1. Delayed");
             Console.WriteLine("2. Boarding");
             Console.WriteLine("3. On Time");
-            Console.Write("Please select the new status of the flight: ");
+            Console.Write("Please select the new status of the flight:\n");
             string opt = (Console.ReadLine() ?? "").Trim();
             switch (opt)
             {
@@ -374,7 +385,7 @@ static void AssignBoardingGate(Terminal terminal)
             selectedFlight.Status = "On Time";
         }
 
-        Console.WriteLine($"\nFlight {selectedFlight.FlightNumber} has been assigned to Boarding Gate {gate.GateName}!\n");
+        Console.WriteLine($"Flight {selectedFlight.FlightNumber} has been assigned to Boarding Gate {gate.GateName}!");
         break;
     }
 }
@@ -448,14 +459,14 @@ static void CreateFlight(Terminal terminal, string flightsCsvPath)
 
             // Append to CSV
             AppendFlightToCsv(flightsCsvPath, newFlight);
-            Console.WriteLine($"Flight {flightNumber} has been added!\n");
+            Console.WriteLine($"Flight {flightNumber} has been added!");
         }
         else
         {
-            Console.WriteLine($"Flight {flightNumber} already exists in the system!\n");
+            Console.Write($"Flight {flightNumber} already exists in the system!\n");
         }
 
-        Console.Write("Would you like to add another flight? (Y/N): ");
+        Console.Write("Would you like to add another flight? (Y/N):\n");
         string again = (Console.ReadLine() ?? "").Trim().ToUpper();
         if (again != "Y") break;
     }
@@ -493,11 +504,10 @@ static void DisplayAirlineFlights(Terminal terminal)
             airline.Code,
             airline.Name);
     }
-    Console.WriteLine();
 
     Console.Write("Enter Airline Code: ");
     string code = (Console.ReadLine() ?? "").Trim().ToUpper();
-    Console.WriteLine();
+    
 
     if (!terminal.Airlines.ContainsKey(code))
     {
@@ -512,7 +522,7 @@ static void DisplayAirlineFlights(Terminal terminal)
 
     // Headings for flights
     Console.WriteLine("{0,-13} {1,-20} {2,-20} {3,-22} {4}",
-        "Flight Number", "Airline Name", "Origin", "Destination", "Expected Time");
+        "Flight Number", "Airline Name", "Origin", "Destination", "Expected Departure/Arrival Time");
 
     // List flights
     foreach (var flight in selectedAirline.Flights.Values)
@@ -544,11 +554,11 @@ static void ModifyFlightDetails(Terminal terminal)
             airline.Code,
             airline.Name);
     }
-    Console.WriteLine();
+    
 
-    Console.Write("Enter Airline Code: ");
+    Console.Write("Enter Airline Code:\n");
     string airlineCode = (Console.ReadLine() ?? "").Trim().ToUpper();
-    Console.WriteLine();
+    
 
     if (!terminal.Airlines.ContainsKey(airlineCode))
     {
@@ -559,7 +569,7 @@ static void ModifyFlightDetails(Terminal terminal)
     Airline selectedAirline = terminal.Airlines[airlineCode];
     Console.WriteLine($"List of Flights for {selectedAirline.Name}");
     // Print headings for the flights
-    Console.WriteLine("Flight Number   Airline Name           Origin                 Destination              Expected Time");
+    Console.WriteLine("Flight Number   Airline Name           Origin                 Destination              Expected Departure/Arrival Time");
     foreach (var f in selectedAirline.Flights.Values)
     {
         Console.WriteLine("{0,-15} {1,-22} {2,-22} {3,-24} {4}",
@@ -569,11 +579,11 @@ static void ModifyFlightDetails(Terminal terminal)
             f.Destination,
             f.ExpectedTime.ToString("d/M/yyyy h:mm:ss tt"));
     }
-    Console.WriteLine();
+    
 
-    Console.Write("Choose an existing Flight Number to modify or delete: ");
+    Console.Write("Choose an existing Flight to modify or delete:\n");
     string chosenFlightNum = (Console.ReadLine() ?? "").Trim();
-    Console.WriteLine();
+    
 
     if (string.IsNullOrWhiteSpace(chosenFlightNum) || !selectedAirline.Flights.ContainsKey(chosenFlightNum))
     {
@@ -585,21 +595,20 @@ static void ModifyFlightDetails(Terminal terminal)
 
     Console.WriteLine("1. Modify Flight");
     Console.WriteLine("2. Delete Flight");
-    Console.Write("Choose an option: ");
+    Console.Write("Choose an option:\n");
     string modOrDelete = (Console.ReadLine() ?? "").Trim();
-    Console.WriteLine();
+    
 
     if (modOrDelete == "1")
     {
-        // Modify Flight
-        Console.WriteLine("What would you like to modify?");
-        Console.WriteLine("1. Modify Basic Information (Origin, Destination, Expected Time)");
+        
+        Console.WriteLine("1. Modify Basic Information");
         Console.WriteLine("2. Modify Status");
         Console.WriteLine("3. Modify Special Request Code");
         Console.WriteLine("4. Modify Boarding Gate");
-        Console.Write("Choose an option: ");
+        Console.Write("Choose an option:\n");
         string modifyChoice = (Console.ReadLine() ?? "").Trim();
-        Console.WriteLine();
+
 
         switch (modifyChoice)
         {
@@ -657,12 +666,12 @@ static void ModifyFlightDetails(Terminal terminal)
 
 static void ModifyBasicInformation(Flight flight)
 {
-    Console.Write($"Enter new Origin (current: {flight.Origin}): ");
+    Console.Write($"Enter new Origin: ");
     string newOrigin = Console.ReadLine()?.Trim();
     if (!string.IsNullOrWhiteSpace(newOrigin))
         flight.Origin = newOrigin;
 
-    Console.Write($"Enter new Destination (current: {flight.Destination}): ");
+    Console.Write($"Enter new Destination: ");
     string newDestination = Console.ReadLine()?.Trim();
     if (!string.IsNullOrWhiteSpace(newDestination))
         flight.Destination = newDestination;
@@ -686,7 +695,7 @@ static void ModifyBasicInformation(Flight flight)
     }
 
 
-    Console.WriteLine("Flight updated!\n");
+    Console.WriteLine("Flight updated!");
 }
 
 static void ModifyFlightStatus(Flight flight)
@@ -809,14 +818,14 @@ static void DisplayFullFlightDetails(Terminal terminal, Flight flight)
     string specialRequest = GetSpecialRequestCodeFromFlight(flight);
     if (string.IsNullOrEmpty(specialRequest)) specialRequest = "None";
 
-    Console.WriteLine("Flight Number:          " + flight.FlightNumber);
-    Console.WriteLine("Airline Name:           " + airlineName);
-    Console.WriteLine("Origin:                 " + flight.Origin);
-    Console.WriteLine("Destination:            " + flight.Destination);
+    Console.WriteLine("Flight Number: " + flight.FlightNumber);
+    Console.WriteLine("Airline Name: " + airlineName);
+    Console.WriteLine("Origin: " + flight.Origin);
+    Console.WriteLine("Destination: " + flight.Destination);
     Console.WriteLine("Expected Departure/Arrival Time: " + flight.ExpectedTime.ToString("d/M/yyyy h:mm:ss tt"));
-    Console.WriteLine("Status:                 " + flight.Status);
-    Console.WriteLine("Special Request Code:   " + specialRequest);
-    Console.WriteLine("Boarding Gate:          " + gateName);
+    Console.WriteLine("Status: " + flight.Status);
+    Console.WriteLine("Special Request Code: " + specialRequest);
+    Console.WriteLine("Boarding Gate: " + gateName);
     Console.WriteLine();
 }
 
@@ -1160,5 +1169,165 @@ static void DisplayTotalFeePerAirlineForTheDay(Terminal terminal)
         discountPercentage = (grandDiscountTotal / grandFinalTotal) * 100.0;
     }
     Console.WriteLine($"Percentage of discounts over final total: {discountPercentage:0.00}%\n");
+}
+
+static void SearchAndFilterFlights(Terminal terminal)
+{
+    Console.WriteLine("=============================================");
+    Console.WriteLine("Flight Search & Filter");
+    Console.WriteLine("=============================================");
+
+    Console.WriteLine("Choose a filter type:");
+    Console.WriteLine("1. By Flight Number");
+    Console.WriteLine("2. By Origin");
+    Console.WriteLine("3. By Destination");
+    Console.WriteLine("4. By Time Range");
+    Console.WriteLine("0. Cancel");
+    Console.Write("Enter your choice: ");
+    string choice = (Console.ReadLine() ?? "").Trim();
+    Console.WriteLine();
+
+    // If user wants to cancel
+    if (choice == "0")
+    {
+        Console.WriteLine("Returning to Main Menu...\n");
+        return;
+    }
+
+    IEnumerable<Flight> filteredFlights = terminal.Flights.Values; // Start with all flights
+
+    switch (choice)
+    {
+        case "1":
+            filteredFlights = FilterByFlightNumber(filteredFlights);
+            break;
+        case "2":
+            filteredFlights = FilterByOrigin(filteredFlights);
+            break;
+        case "3":
+            filteredFlights = FilterByDestination(filteredFlights);
+            break;
+        case "4":
+            filteredFlights = FilterByTimeRange(filteredFlights);
+            break;
+        default:
+            Console.WriteLine("Invalid choice. Returning to Main Menu...\n");
+            return;
+    }
+
+    // Convert to a list so we can reuse
+    var results = filteredFlights.ToList();
+    if (results.Count == 0)
+    {
+        Console.WriteLine("No flights found matching the criteria.\n");
+        return;
+    }
+
+    // Display the results
+    Console.WriteLine("Flights Matching Your Search:");
+    Console.WriteLine("Flight Number   Airline Name           Origin                 Destination              Expected Time           Status");
+    foreach (var flight in results)
+    {
+        Airline airline = terminal.GetAirlineFromFlight(flight);
+        string airlineName = airline != null ? airline.Name : "Unknown Airline";
+        Console.WriteLine("{0,-15} {1,-22} {2,-22} {3,-24} {4,-24} {5}",
+            flight.FlightNumber,
+            airlineName,
+            flight.Origin,
+            flight.Destination,
+            flight.ExpectedTime.ToString("d/M/yyyy h:mm:ss tt"),
+            flight.Status);
+    }
+    Console.WriteLine();
+}
+
+// =========================
+// FILTER HELPER METHODS
+// =========================
+
+static IEnumerable<Flight> FilterByFlightNumber(IEnumerable<Flight> flights)
+{
+    Console.Write("Enter Flight Number to search (partial or full): ");
+    string input = (Console.ReadLine() ?? "").Trim().ToUpper();
+    if (string.IsNullOrWhiteSpace(input))
+    {
+        // If user didn't enter anything, return the original list (no filter)
+        return flights;
+    }
+
+    return flights.Where(f => f.FlightNumber.ToUpper().Contains(input));
+}
+
+static IEnumerable<Flight> FilterByOrigin(IEnumerable<Flight> flights)
+{
+    Console.Write("Enter Origin to search (partial or full): ");
+    string input = (Console.ReadLine() ?? "").Trim().ToUpper();
+    if (string.IsNullOrWhiteSpace(input))
+    {
+        return flights; // no filter if blank
+    }
+
+    return flights.Where(f => f.Origin.ToUpper().Contains(input));
+}
+
+static IEnumerable<Flight> FilterByDestination(IEnumerable<Flight> flights)
+{
+    Console.Write("Enter Destination to search (partial or full): ");
+    string input = (Console.ReadLine() ?? "").Trim().ToUpper();
+    if (string.IsNullOrWhiteSpace(input))
+    {
+        return flights;
+    }
+
+    return flights.Where(f => f.Destination.ToUpper().Contains(input));
+}
+
+static IEnumerable<Flight> FilterByTimeRange(IEnumerable<Flight> flights)
+{
+    Console.Write("Enter Start Date/Time (dd/MM/yyyy HH:mm) or press Enter to skip: ");
+    string startInput = (Console.ReadLine() ?? "").Trim();
+    Console.Write("Enter End Date/Time (dd/MM/yyyy HH:mm) or press Enter to skip: ");
+    string endInput = (Console.ReadLine() ?? "").Trim();
+
+    DateTime? startTime = null;
+    DateTime? endTime = null;
+
+    // Try parse start time
+    if (!string.IsNullOrWhiteSpace(startInput))
+    {
+        if (DateTime.TryParseExact(startInput, "d/M/yyyy H:mm", null, System.Globalization.DateTimeStyles.None, out DateTime parsedStart))
+        {
+            startTime = parsedStart;
+        }
+        else
+        {
+            Console.WriteLine("Invalid start date/time format. Ignoring start time filter.\n");
+        }
+    }
+    // Try parse end time
+    if (!string.IsNullOrWhiteSpace(endInput))
+    {
+        if (DateTime.TryParseExact(endInput, "d/M/yyyy H:mm", null, System.Globalization.DateTimeStyles.None, out DateTime parsedEnd))
+        {
+            endTime = parsedEnd;
+        }
+        else
+        {
+            Console.WriteLine("Invalid end date/time format. Ignoring end time filter.\n");
+        }
+    }
+
+    // Filter
+    IEnumerable<Flight> result = flights;
+    if (startTime.HasValue)
+    {
+        result = result.Where(f => f.ExpectedTime >= startTime.Value);
+    }
+    if (endTime.HasValue)
+    {
+        result = result.Where(f => f.ExpectedTime <= endTime.Value);
+    }
+
+    return result;
 }
 
