@@ -1,4 +1,12 @@
-﻿public class Rootobject
+﻿/*
+//==========================================================
+// Student Number : S10269430K
+// Student Name : Thar Htet Shein
+// Partner Name : Nadella Bhaveesh Sai
+//==========================================================
+*/
+
+public class Rootobject
 {
     public Item[] items { get; set; }
 }

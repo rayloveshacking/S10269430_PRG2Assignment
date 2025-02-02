@@ -354,7 +354,7 @@ static void AssignBoardingGate(Terminal terminal)
         Console.WriteLine($"Flight Number: {selectedFlight.FlightNumber}");
         Console.WriteLine($"Origin: {selectedFlight.Origin}");
         Console.WriteLine($"Destination: {selectedFlight.Destination}");
-        Console.WriteLine($"Expected Time: {selectedFlight.ExpectedTime.ToString("d/M/yyyy h:mm:ss tt")}");
+        Console.WriteLine($"Expected Time: {selectedFlight.ExpectedTime.ToString("d/M/yyyy h:mm:ss tt").ToLower()}");
         string spRequest = GetSpecialRequestCodeFromFlight(selectedFlight);
         Console.WriteLine($"Special Request Code: {(string.IsNullOrEmpty(spRequest) ? "None" : spRequest)}");
 
@@ -543,7 +543,7 @@ static void DisplayAirlineFlights(Terminal terminal)
             selectedAirline.Name,
             flight.Origin,
             flight.Destination,
-            flight.ExpectedTime.ToString("d/M/yyyy h:mm:ss tt"));
+            flight.ExpectedTime.ToString("d/M/yyyy h:mm:ss tt").ToLower());
     }
     Console.WriteLine();
 }
@@ -588,7 +588,7 @@ static void ModifyFlightDetails(Terminal terminal)
             selectedAirline.Name,
             f.Origin,
             f.Destination,
-            f.ExpectedTime.ToString("d/M/yyyy h:mm:ss tt"));
+            f.ExpectedTime.ToString("d/M/yyyy h:mm:ss tt").ToLower());
     }
 
 
@@ -833,7 +833,7 @@ static void DisplayFullFlightDetails(Terminal terminal, Flight flight)
     Console.WriteLine("Airline Name: " + airlineName);
     Console.WriteLine("Origin: " + flight.Origin);
     Console.WriteLine("Destination: " + flight.Destination);
-    Console.WriteLine("Expected Departure/Arrival Time: " + flight.ExpectedTime.ToString("d/M/yyyy h:mm:ss tt"));
+    Console.WriteLine("Expected Departure/Arrival Time: " + flight.ExpectedTime.ToString("d/M/yyyy h:mm:ss tt").ToLower());
     Console.WriteLine("Status: " + flight.Status);
     Console.WriteLine("Special Request Code: " + specialRequest);
     Console.WriteLine("Boarding Gate: " + gateName);
@@ -876,7 +876,7 @@ static void DisplayFlightScheduleChronologically(Terminal terminal)
             airlineName,
             flight.Origin,
             flight.Destination,
-            flight.ExpectedTime.ToString("d/M/yyyy h:mm:ss tt"),
+            flight.ExpectedTime.ToString("d/M/yyyy h:mm:ss tt").ToLower(),
             flight.Status,
             gateName);
     }
@@ -981,7 +981,7 @@ static void BulkProcessUnassignedFlights(Terminal terminal)
             Console.WriteLine($"  Airline Name:    {airlineName}");
             Console.WriteLine($"  Origin:          {flight.Origin}");
             Console.WriteLine($"  Destination:     {flight.Destination}");
-            Console.WriteLine($"  Expected Time:   {flight.ExpectedTime.ToString("d/M/yyyy h:mm:ss tt")}");
+            Console.WriteLine($"  Expected Time:   {flight.ExpectedTime.ToString("d/M/yyyy h:mm:ss tt").ToLower()}");
             Console.WriteLine($"  Special Request: {(string.IsNullOrEmpty(specialRequestCode) ? "None" : specialRequestCode)}");
             Console.WriteLine($"  Assigned Gate:   {suitableGate.GateName}");
             Console.WriteLine();
@@ -1239,7 +1239,7 @@ static void SearchAndFilterFlights(Terminal terminal)
 
     // Display the results
     Console.WriteLine("Flights Matching Your Search:");
-    Console.WriteLine("Flight Number   Airline Name           Origin                 Destination              Expected Time           Status");
+    Console.WriteLine("Flight Number   Airline Name           Origin                 Destination              Expected Time            Status");
     foreach (var flight in results)
     {
         Airline airline = terminal.GetAirlineFromFlight(flight);
@@ -1249,7 +1249,7 @@ static void SearchAndFilterFlights(Terminal terminal)
             airlineName,
             flight.Origin,
             flight.Destination,
-            flight.ExpectedTime.ToString("d/M/yyyy h:mm:ss tt"),
+            flight.ExpectedTime.ToString("d/M/yyyy h:mm:ss tt").ToLower(),
             flight.Status);
     }
     Console.WriteLine();
